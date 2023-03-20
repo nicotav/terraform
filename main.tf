@@ -31,53 +31,6 @@ resource "azurerm_public_ip" "my_terraform_public_ip" {
   allocation_method   = "Dynamic"
 }
 
-# Create Network Security Group and rule
-resource "azurerm_network_security_group" "my_terraform_nsg" {
-  name                = "myNetworkSecurityGroup"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  dynamic "security_rule" {
-    for_each = [
-      {
-        name                   = "SSH"
-        priority               = 1001
-        destination_port_range = "22"
-      },
-      {
-        name                   = "HTTP"
-        priority               = 1002
-        destination_port_range = "80"
-      },
-      {
-        name                   = "HTTPS"
-        priority               = 1003
-        destination_port_range = "443"
-      },
-      {
-        name                   = "Jenkins"
-        priority               = 1004
-        destination_port_range = "8080"
-      },
-      {
-        name                   = "nodejs"
-        priority               = 1005
-        destination_port_range = "1337"
-      }
-    ]
-    content {
-      name                       = security_rule.value.name
-      priority                   = security_rule.value.priority
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = security_rule.value.destination_port_range
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-    }
-  }
-}
 
 # Create network interface
 resource "azurerm_network_interface" "my_terraform_nic" {
@@ -93,11 +46,6 @@ resource "azurerm_network_interface" "my_terraform_nic" {
   }
 }
 
-# Connect the security group to the network interface
-resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.my_terraform_nic.id
-  network_security_group_id = azurerm_network_security_group.my_terraform_nsg.id
-}
 
 # Generate random text for a unique storage account name
 resource "random_id" "random_id" {
@@ -125,8 +73,8 @@ resource "tls_private_key" "example_ssh" {
 }
 
 # Create virtual machine
-resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
-  name                  = "myVM"
+resource "azurerm_linux_virtual_machine" "my_terraform_vm_2" {
+  name                  = "myVM2"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.my_terraform_nic.id]
@@ -164,7 +112,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
       type        = "ssh"
       user        = "azureuser"
       private_key = tls_private_key.example_ssh.private_key_pem
-      host        = azurerm_linux_virtual_machine.my_terraform_vm.public_ip_address
+      host        = azurerm_linux_virtual_machine.my_terraform_vm2.public_ip_address
     }
     inline = [
       "sudo apt-get update",
