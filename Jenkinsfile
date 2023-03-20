@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/terraform'
+                git branch: 'main', url: 'https://github.com/nicotav/terraform/'
             }
         }
         stage('Terraform Init') {
