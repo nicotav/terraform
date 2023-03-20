@@ -168,6 +168,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
     }
     inline = [
       "sudo apt-get update",
+      "sudo apt-get install -y nginx",
     ]
   }
 
