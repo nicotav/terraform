@@ -13,12 +13,12 @@ pipeline {
         }
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out main.tfplan'
+                sh 'terraform plan main.tf'
             }
         }
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve main.tfplan'
+                sh 'terraform apply -auto-approve main.tf'
             }
         }
         stage('Terraform Destroy') {
